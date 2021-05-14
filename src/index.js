@@ -1,5 +1,3 @@
-import 'core-js/stable'
-import 'regenerator-runtime/runtime'
 import './scss/index.scss'
 import {Excel} from './components/excel/Excel';
 import {Header} from './components/header/Header';
@@ -13,5 +11,6 @@ const excel = new Excel('#app', {
 })
 // excel.$el = div.#app
 
-excel.render()
+excel.render();
+
 
