@@ -36,6 +36,11 @@ class Dom {
         this.$element.addEventListener(eventType, callback)
     }
 
+    off(eventType, callback) {
+        this.$element.removeEventListener(eventType, callback)
+
+    }
+
     
 }
 

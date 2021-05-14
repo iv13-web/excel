@@ -73,6 +73,8 @@ export class Excel {
         // this.$element = div.#app в index.js
         this.$element.append(this.getContent());
         this.components.forEach( component => component.init())
+
+
     }
 }
 

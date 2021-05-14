@@ -27,12 +27,23 @@ export class DOMListener {
             // this - инстанс класса компонента, например Formula
             // this[method] - callbak функция из прототипа
             // bind, чтобы привязать контекст к Dom-formula и иметь доступ к $element в onInput() в formula.js
-            this.$element.on(listener, this[method].bind(this))
+            // bind создает новую функцию, поэтому прямым аналогом removeDOMListeners не получится пользоваться
+            // this.$element.on(listener, this[method].bind(this))
+            // рабочий вариант:
+            this[method] = this[method].bind(this)
+            this.$element.on(listener, this[method])
+
         })
     }
 
     removeDOMListeners() {
-        
+        this.listeners.forEach(listener => {
+            const method = getMethodName(listener)
+            if (!this[method]) {
+                throw new Error (`Method ${method} is undefined in ${this.name} Component`)
+            }
+            this.$element.off(listener, this[method])
+        })
     }
 
 
