@@ -58,8 +58,8 @@ module.exports = (env, argv) => {
         },
         devServer: {
             port: 9000,
-            open: true,
-            hot: true,
+            // open: true,
+            // hot: true,
         },
         devtool: isDev ? 'source-map' : false,
         plugins: plugins(),
