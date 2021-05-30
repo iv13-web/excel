@@ -1,10 +1,11 @@
-import {dom} from '@core/dom';
+import {$} from '@core/dom';
 // $someName - какой-либо DOM элемент
 
 export class Excel {
     constructor(selector, options) {
-        // this.$element = document.querySelector(selector);
-        this.$element = dom(selector);
+        // this.$el = document.querySelector(selector);
+        // создаем через доллар, чтобы у this.$el были доступны методы класса Dom
+        this.$el = $(selector);
         // в массив components передаем классы header, formula etc
         this.components = options.components || [];
     }
@@ -13,9 +14,9 @@ export class Excel {
     // getContent() - получаем div, заполненный инстансами всех компонентов из массива components
     getContent() {
         // создаем div, в котором будут лежать компоненты
-        const $parentDiv = dom.create('div', 'excel');
-        // const $parentDiv = document.createElement('div')
-        // $parentDiv.classList.add('excel')
+        const $root = $.create('div', 'excel');
+        // const $root = document.createElement('div')
+        // $root.classList.add('excel')
         
         // this.components = header, toolbar...
         // для каждого компонента создаем div
@@ -26,52 +27,52 @@ export class Excel {
         // и чтобы затем через forEach можно было у каждого компонента этот метод вызвать
         this.components = this.components.map(Component => {
             // добавляем static className из файлов header, table ...
-            const $element = dom.create('div', Component.className)
-            // const $element = document.createElement('div')
-            // $element.classList.add(Component.className)
-            // $element будет использоваться в DOMListener для добавления слуаштелей
+            const $el = $.create('div', Component.className)
+            // const $el = document.createElement('div')
+            // $el.classList.add(Component.className)
+            // $el будет использоваться в DOMListener для добавления слуаштелей
 
             // каждый component будет новым instance классов Header, Toolbar etc
             // в скобки передаем элемент для конструктора DOMListener, чтобы в будущем иметь доступ
-            const component = new Component($element)
+            const component = new Component($el)
 
             // выведет на странцу то, что указано в методе toHTML() у каждого компонента
-            // $element.innerHTML = component.toHTML(); можно сократить с помошью dom.js
+            // $el.innerHTML = component.toHTML(); можно сократить с помошью dom.js
             // component.toHTML() - разметка каждого компонента
-            $element.html(component.toHTML())
+            $el.html(component.toHTML())
 
-            $parentDiv.append($element)
+            $root.append($el)
             return component
         })
-        return $parentDiv
+        return $root
 
 
         // this.components.forEach(Component => {
         //     // добавляем static className из файлов header, table ...
-        //     const $element = dom.create('div', Component.className)
-        //     // const $element = document.createElement('div')
-        //     // $element.classList.add(Component.className)
-        //     // $element будет использоваться в DOMListener для добавления слуаштелей
+        //     const $el = dom.create('div', Component.className)
+        //     // const $el = document.createElement('div')
+        //     // $el.classList.add(Component.className)
+        //     // $el будет использоваться в DOMListener для добавления слуаштелей
 
         //     // каждый component будет новым instance классов Header, Toolbar etc
         //     // в скобки передаем элемент для конструктора DOMListener, чтобы в будущем иметь доступ
-        //     const component = new Component($element)
+        //     const component = new Component($el)
 
         //     // выведет на странцу то, что указано в методе toHTML() у каждого компонента
-        //     // $element.innerHTML = component.toHTML(); можно сократить с помошью dom.js
+        //     // $el.innerHTML = component.toHTML(); можно сократить с помошью dom.js
         //     // component.toHTML() - разметка каждого компонента
-        //     $element.html(component.toHTML())
+        //     $el.html(component.toHTML())
 
-        //     $parentDiv.append($element)
+        //     $parentDiv.append($el)
         // })
-        // // получаем заполненный div (.$element, т.к это инастанс класса DOM) => return $parentDiv.$element
+        // // получаем заполненный div (.$el, т.к это инастанс класса DOM) => return $parentDiv.$el
         // // но также это можно исправить, обернув в dom() document.querySelector(selector) => dom(selector)
         // return $parentDiv
     }
 
     render() {
-        // this.$element = div.#app в index.js
-        this.$element.append(this.getContent());
+        // this.$el = div.#app в index.js
+        this.$el.append(this.getContent());
         this.components.forEach( component => component.init())
 
 

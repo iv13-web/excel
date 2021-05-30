@@ -3,20 +3,20 @@
 class Dom {
     constructor (selector) {
         // если selector - строка (например, #app)
-        this.$element = typeof selector === 'string' 
+        this.$el = typeof selector === 'string' 
             ? document.querySelector(selector)
             : selector
     }
 
     html(html) {
+        // в данном случае работает как setter
         if (typeof html === 'string') {
-            this.$element.innerHTML = html
-            // return this делается для того, чтобы можно было выполнять
-            // chain, например в методе clear
+            this.$el.innerHTML = html
+            // return this делается для того, чтобы можно было выполнять chain, например в методе clear
             return this
         } 
-        // иначе будем возвращать:
-        return this.$element.outerHTML.trim()
+        // в данном случае работает как getter
+        return this.$el.outerHTML.trim()
     }
 
     clear() {
@@ -27,17 +27,17 @@ class Dom {
     append(nodeToAppend) {
         // проверка на случай, если захотим использовать нативную ноду, а не инстанс
         if (nodeToAppend instanceof Dom) {
-            nodeToAppend = nodeToAppend.$element
+            nodeToAppend = nodeToAppend.$el
         }
-        this.$element.append(nodeToAppend)
+        this.$el.append(nodeToAppend)
     }
 
     on(eventType, callback) {
-        this.$element.addEventListener(eventType, callback)
+        this.$el.addEventListener(eventType, callback)
     }
 
     off(eventType, callback) {
-        this.$element.removeEventListener(eventType, callback)
+        this.$el.removeEventListener(eventType, callback)
 
     }
 
@@ -45,7 +45,7 @@ class Dom {
 }
 
 // чтобы не писать каждый раз new Dom.create(), а сразу писать методы
-export function dom(selector) {
+export function $(selector) {
     return new Dom(selector)
 }
 
@@ -55,13 +55,13 @@ export function dom(selector) {
 Если мы создаём новую дом ноду, то мы ещё не имеем доступа к ней. 
 То есть нам сначала нужно ее создать, а потом только мы сможем использовать все методы.
 */
-dom.create = (tagName, className = '') => {
+$.create = (tagName, className = '') => {
     const element = document.createElement(tagName)
     if (className) {
         element.classList.add(className)
     }
     // оборачиваем в dom, чтобы связать с классом DOM
-    // после этого в excel.js $parentDiv и $element станут инстанасами класса DOM
-    return dom(element)
+    // после этого в excel.js $parentDiv и $el станут досутпны методы класса Dom (clear, html и т.д)
+    return $(element)
     // return element
 }

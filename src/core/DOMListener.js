@@ -5,14 +5,14 @@ import {capitalizeFirstLetter} from '@core/utilities'
 */
 
 export class DOMListener {
-    // $element - компоненты, на которые будем вешать слушатели
+    // $el - компоненты, на которые будем вешать слушатели
     // в конструкторе делаем возможность получить доступ до этого элемента, чтобы повесить обработчик
-    constructor($element, listeners = []) {
-        if (!$element) {
-            throw new Error('No $element provided')
+    constructor($root, listeners = []) {
+        if (!$root) {
+            throw new Error('No $el provided')
         }
-        // на $element (инстанс класса Dom) будем вещать обработчик
-        this.$element = $element
+        // на $el (инстанс класса Dom) будем вещать обработчик
+        this.$root = $root
         this.listeners = listeners
     }
 
@@ -26,12 +26,12 @@ export class DOMListener {
             }
             // this - инстанс класса компонента, например Formula
             // this[method] - callbak функция из прототипа
-            // bind, чтобы привязать контекст к Dom-formula и иметь доступ к $element в onInput() в formula.js
+            // bind, чтобы привязать контекст к Dom-formula и иметь доступ к $root в onInput() в formula.js
             // bind создает новую функцию, поэтому прямым аналогом removeDOMListeners не получится пользоваться
-            // this.$element.on(listener, this[method].bind(this))
+            // this.$root.on(listener, this[method].bind(this))
             // рабочий вариант:
             this[method] = this[method].bind(this)
-            this.$element.on(listener, this[method])
+            this.$root.on(listener, this[method])
 
         })
     }
@@ -42,7 +42,7 @@ export class DOMListener {
             if (!this[method]) {
                 throw new Error (`Method ${method} is undefined in ${this.name} Component`)
             }
-            this.$element.off(listener, this[method])
+            this.$root.off(listener, this[method])
         })
     }
 

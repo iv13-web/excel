@@ -3,9 +3,9 @@ import {DOMListener} from '@core/DOMListener';
 
 export class ExcelComponent extends DOMListener {
 
-    constructor ($element, options = {}) {
+    constructor ($root, options = {}) {
         // добавляем options.listeners из formula
-        super ($element, options.listeners)
+        super ($root, options.listeners)
         this.name = options.name
     }
 
