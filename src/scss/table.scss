@@ -6,13 +6,29 @@
     left: 0;
     right: 0;
     top: $header-height + $toolbar-height + $formula-height;
-    overflow-x: auto;
+    overflow-x: scroll;
     padding-bottom: 2px;
+    height: calc(100vh - #{$header-height + $toolbar-height + $formula-height});
 
     .row {
         display: flex;
         min-height: 20px;
         height: $row-height;
+        position: relative;
+
+        &:first-child {
+            position: sticky;
+            top: 0;
+            z-index: 1;
+            padding-left: 40px;
+
+            .row-info {
+                position: fixed;
+                top: calc(#{$header-height + $toolbar-height + $formula-height});
+                z-index: 3;
+                height: 24px;
+            }
+        }
     }
 
     .row-info {
@@ -24,14 +40,15 @@
         border: 1px solid $border-color;
         background: #f8f9fa;
         border-top: none;
-        position: relative;
+        position: sticky;
+        left: 0;
         user-select: none;
-
     }
 
     .row-data {
         display: flex;
     }
+
 
     .column {
         display: flex;
@@ -72,29 +89,37 @@
         top: 0;
         right: 0;
         bottom: 0;
-        width: 6px;
-        background: #3c74ff;
+        width: 4px;
+        background: #15a513;
         opacity: 0;
-        &:hover, &:active {
+        z-index: 2;
+        
+        &:hover {
             opacity: 1;
             cursor: col-resize;
+            left: auto
+        }
+        &:active {
+            height: 100vh;
+            width: 2px;
         }
     }
 
     .row-resize {
         position: absolute;
         bottom: 0;
-        height: 4px;
-        background: #3c74ff;
+        height: 2px;
+        background: #15a513;
         opacity: 0;
-        width: 100%;
-        &:hover, &:active {
+        width: 40px;
+        z-index: 2;
+        &:hover{
             opacity: 1;
             cursor: row-resize;
-            
+        }
+        &:active {
+            width: 100vw;
         }
 
     }
-
-
 }   
