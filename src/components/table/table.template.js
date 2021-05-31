@@ -3,19 +3,32 @@ const CODES = {
     Z: 90 
 }
 
-function createCell() {
-    return `<div class="cell" contenteditable></div>`   
+function createCell(i) {
+    return `<div class="cell" contenteditable data-col=${i} ></div>`   
 }
 
-function createColumn(el) {
-    return `<div class="column">${el}</div>`
+function createColumn(el, i) {
+    return `<div class="column" data-type="resizable" data-col=${i}>
+        ${el}
+        <div class="col-resize" data-resize="col"></div>
+    </div>`
 }
 
 function createRow(content, i='') {
+
+    // data-row не нужен?
+    // тернарник, чтобы убрать 0 в верхней левой ячейкке
+    const resizer = i !== ''
+        ? `<div class="row-resize" data-resize="row"></div>`
+        : ''
+
     return `
-        <div class="row">
-            <div class="row-info">${i}</div>
+        <div class="row" data-type="resizable" data-row="${i}">
+            <div class="row-info">
+                ${i}
+            </div>
             <div class="row-data">${content}</div>
+            ${resizer}
         </div>
     `
 }
@@ -33,7 +46,8 @@ export function createTable (rowsCount = 10) {
         // можно передать по ссылке createColumn в map
         //.map(createColumn)
         //   .map(el => createColumn(el))
-        .map(el => createColumn(el))
+        // el - буква
+        .map((el, i) => createColumn(el, i))
         .join('')    
     
 
@@ -45,7 +59,7 @@ export function createTable (rowsCount = 10) {
     for (let i = 0; i < rowsCount; i++) {
         const cells = new Array(colsCount)
         .fill('')
-        .map(createCell)
+        .map((_, i)=> createCell(i))
         .join('')
 
         rows.push(createRow(cells, i+1))
