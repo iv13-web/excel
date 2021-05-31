@@ -45,7 +45,11 @@ class Dom {
         return $(this.$el.closest(selector))
     }
 
-    findAll (selector) {
+    find(selector) {
+        return this.$el.querySelector(selector)
+    }
+
+    findAll(selector) {
         return this.$el.querySelectorAll(selector)
     }
 
@@ -61,11 +65,14 @@ class Dom {
         return this
     }
 
+    addClass(selector, className) {
+        this.$el.classList.add(className)
+    }
+
     get dataset() {
        return this.$el.dataset 
     }
 
-    
 }
 
 // чтобы не писать каждый раз new Dom.create(), а сразу писать методы

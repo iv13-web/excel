@@ -11,6 +11,7 @@ export function resizeHandler($root, event) {
     const coordinates = parent.getCoordinates()
     const cells = $root.findAll(`[data-col="${parent.dataset.col}"`)
     const sideProp = type === 'col' ? 'left' : 'top'
+
     document.onmousemove = e => {
         let deltaX = e.pageX - coordinates.right
         let newSizeX = coordinates.width + deltaX

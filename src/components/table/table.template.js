@@ -3,30 +3,31 @@ const CODES = {
     Z: 90 
 }
 
-function createCell(i) {
-    return `<div class="cell" contenteditable data-col=${i} ></div>`   
+function createCell(col, row) {
+    return `<div class="cell" contenteditable 
+                 data-col=${col}
+                 data-id=${row+1}:${col+1}>
+            </div>`
 }
 
+// el - буква для шапки табоицы
 function createColumn(el, i) {
-    return `<div class="column" data-type="resizable" data-col=${i}>
+    return `
+    <div class="column" data-type="resizable" data-col=${i}>
         ${el}
         <div class="col-resize" data-resize="col"></div>
     </div>`
 }
 
 function createRow(content, i='') {
-
-    // data-row не нужен?
-    // тернарник, чтобы убрать 0 в верхней левой ячейкке
+    // тернарник, чтобы убрать resizer в верхней левой ячейкке
     const resizer = i !== ''
         ? `<div class="row-resize" data-resize="row"></div>`
         : ''
 
     return `
         <div class="row" data-type="resizable" data-row="${i}">
-            <div class="row-info">
-                ${i}
-            </div>
+            <div class="row-info">${i}</div>
             <div class="row-data">${content}</div>
             ${resizer}
         </div>
@@ -56,13 +57,14 @@ export function createTable (rowsCount = 10) {
 
     
     // создаем переменные cells в цикле, чтобы потом добавлять id
-    for (let i = 0; i < rowsCount; i++) {
+    for (let row = 0; row < rowsCount; row++) {
+
         const cells = new Array(colsCount)
         .fill('')
-        .map((_, i)=> createCell(i))
+        .map((_, col) => createCell(col, row))
         .join('')
 
-        rows.push(createRow(cells, i+1))
+        rows.push(createRow(cells, row+1))
     }
 
     return rows.join('')
