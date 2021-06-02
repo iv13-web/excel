@@ -46,7 +46,7 @@ class Dom {
     }
 
     find(selector) {
-        return this.$el.querySelector(selector)
+        return $(this.$el.querySelector(selector))
     }
 
     findAll(selector) {
@@ -65,12 +65,29 @@ class Dom {
         return this
     }
 
-    addClass(selector, className) {
+    addClass(className) {
         this.$el.classList.add(className)
     }
 
-    get dataset() {
+
+    removeClass(className) {
+        this.$el.classList.remove(className)
+    }
+
+    get data() {
        return this.$el.dataset 
+    }
+
+    id(parse) {
+        if (parse) {
+            const parsed = this.id().split(':')
+            return {
+                row: +parsed[0],
+                col: +parsed[1]
+            }
+        }
+
+        return this.data.id
     }
 
 }

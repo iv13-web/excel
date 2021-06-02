@@ -6,7 +6,8 @@ const CODES = {
 function createCell(col, row) {
     return `<div class="cell" contenteditable 
                  data-col=${col}
-                 data-id=${row+1}:${col+1}>
+                 data-id=${row+1}:${col+1}
+                 data-type="cell"> 
             </div>`
 }
 

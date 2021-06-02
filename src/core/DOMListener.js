@@ -45,10 +45,7 @@ export class DOMListener {
             this.$root.off(listener, this[method])
         })
     }
-
-
 }
-
 
 function getMethodName (eventName) {
     return 'on' + capitalizeFirstLetter(eventName)

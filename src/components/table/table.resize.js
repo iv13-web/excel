@@ -4,12 +4,13 @@ export function resizeHandler($root, event) {
 
     // target - это сам resizer
     const resizer = $(event.target)
-    const type = resizer.dataset.resize
+    // data - метод в dom для dataset
+    const type = resizer.data.resize
      // const parent = resizer.$el.closest('[data-type="resizable"]');
      // в dom сделан свой метод closest, чтобы parent был от класса Dom
     const parent = resizer.closest('[data-type="resizable"]')
     const coordinates = parent.getCoordinates()
-    const cells = $root.findAll(`[data-col="${parent.dataset.col}"`)
+    const cells = $root.findAll(`[data-col="${parent.data.col}"`)
     const sideProp = type === 'col' ? 'left' : 'top'
 
     document.onmousemove = e => {
