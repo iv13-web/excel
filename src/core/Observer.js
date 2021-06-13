@@ -15,7 +15,6 @@ export class Observer {
 	subscribe(eventName, fn) {
 		this.listeners[eventName] = this.listeners[eventName] || []
 		this.listeners[eventName].push(fn)
-		console.log(this.listeners)
 		// замыкание для отписки от события
 		return () => {
 			this.listeners[eventName] =
