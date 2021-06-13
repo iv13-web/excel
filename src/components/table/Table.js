@@ -3,15 +3,18 @@ import {ExcelComponent} from '@core/ExcelComponent';
 import {TableSelection} from "@/components/table/TableSelection";
 import {createTable} from './table.template';
 import {resizeHandler} from './table.resize'
-import {isCell, shouldResize} from './table.helpers'
-
+import {isCell, matrix, nextSelector, shouldResize} from './table.helpers'
 
 export class Table extends ExcelComponent {
-    static className = 'excel__table'   
+    static className = 'excel__table'
+
     // this.$root - Dom{excel__table}
-    constructor ($root) {
-        super ($root, {  
-            listeners: ['mousedown']
+    constructor ($root, options) {
+        super ($root, {
+            name: 'Table',
+            listeners: ['mousedown', 'keydown', 'input'],
+            ...options
+
         })
     }
 
@@ -20,19 +23,22 @@ export class Table extends ExcelComponent {
     }
 
     prepare() {
-        /*const a = new TableSelection() то же саме, что и ниже*/
         this.selection = new TableSelection()
     }
 
     init() {
-        /* super чтобы инициализровались DOMListeners из ExcelComponent,
-        иначе если не вызвать super, то перезапишем init из ExcelComponent
-        и слушатели не будут работать => реасайз тоже */
+        /* super для обработчиков и реасайза */
         super.init()
-
         const $startCell = this.$root.find('[data-id="1:1"]')
-
         this.selection.selectCell($startCell)
+
+        this.$on('formula:input', text => {
+            this.selection.current.text(text)
+        })
+        this.$on('formula:focus', () => {
+            this.selection.current.focus()
+        })
+        this.$emit('table:select', $startCell)
     }
 
     onMousedown(event) {
@@ -45,38 +51,39 @@ export class Table extends ExcelComponent {
             const $target = $(event.target)
 
             if (event.shiftKey) {
-                const target = $target.id(true)
-                const current = this.selection.current.id(true)
-                const cols = range(current.col, target.col)
-                const rows = range(current.row, target.row)
-
-                // для получения значенй, как в data-id у ячеек
-                // ячейки A1-B2 вернут ["1:1", "2:1", "1:2", "2:2"]
-                const ids = cols.reduce((acc, col)=> {
-                    rows.forEach(row => acc.push(`${row}:${col}`))
-                    return acc
-                },[])
-
-
-                ids.forEach(id => this.$root.find(`[data-id="${id}"]`).css({backgroundColor: 'red'}))
-
+                const cellsArray = matrix($target, this.selection.current)
+                const $cells = cellsArray.map(id => this.$root.find(`[data-id="${id}"]`))
+                this.selection.selectGroup($cells)
 
             } else {
                 this.selection.selectCell($target)
             }
         }
     }
+
+    onKeydown(event) {
+        const $target = this.selection.current.id(true)
+        let {row, col} = $target
+
+        // забираю event.key через деструкт.
+        const {key} = event
+        const keys = ['Tab', 'Enter', 'ArrowUp', 'ArrowLeft', 'ArrowDown', 'ArrowRight']
+
+        if (keys.includes(key) && !event.shiftKey) {
+            event.preventDefault()
+            const $next = this.$root.find(nextSelector(key, {row, col}))
+            this.selection.selectCell($next)
+            this.$emit('table:select', $next)
+        }
+    }
+
+    onInput(event) {
+        this.$emit('table:input', $(event.target))
+    }
 }
 
-/* function range
-input: 0,4
-output: 0,1,2,3,4
-для просчета ячеек к выделению
-*/
 
-function range(start, end) {
-    if (start > end) [end, start] = [start, end]
-    return new Array(end - start + 1)
-        .fill('')
-        .map((_, i) => start + i)
-}
+
+
+
+
