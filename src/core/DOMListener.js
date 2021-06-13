@@ -5,13 +5,13 @@ import {capitalizeFirstLetter} from '@core/utilities'
 */
 
 export class DOMListener {
-    // $el - компоненты, на которые будем вешать слушатели
+    // $root - компоненты, на которые будем вешать слушатели
     // в конструкторе делаем возможность получить доступ до этого элемента, чтобы повесить обработчик
     constructor($root, listeners = []) {
         if (!$root) {
-            throw new Error('No $el provided')
+            throw new Error('No $root provided')
         }
-        // на $el (инстанс класса Dom) будем вещать обработчик
+        // на $root (инстанс класса Dom) будем вещать обработчик
         this.$root = $root
         this.listeners = listeners
     }
@@ -27,9 +27,6 @@ export class DOMListener {
             // this - инстанс класса компонента, например Formula
             // this[method] - callbak функция из прототипа
             // bind, чтобы привязать контекст к Dom-formula и иметь доступ к $root в onInput() в formula.js
-            // bind создает новую функцию, поэтому прямым аналогом removeDOMListeners не получится пользоваться
-            // this.$root.on(listener, this[method].bind(this))
-            // рабочий вариант:
             this[method] = this[method].bind(this)
             this.$root.on(listener, this[method])
 
@@ -45,10 +42,7 @@ export class DOMListener {
             this.$root.off(listener, this[method])
         })
     }
-
-
 }
-
 
 function getMethodName (eventName) {
     return 'on' + capitalizeFirstLetter(eventName)

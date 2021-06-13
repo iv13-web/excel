@@ -1,20 +1,44 @@
+import {$} from "@core/dom";
 import {ExcelComponent} from '@core/ExcelComponent';
+import {TableSelection} from "@/components/table/TableSelection";
 import {createTable} from './table.template';
 import {resizeHandler} from './table.resize'
-import {shouldResize}from './table.helpers'
- 
+import {isCell, matrix, nextSelector, shouldResize} from './table.helpers'
+
 export class Table extends ExcelComponent {
-    static className = 'excel__table'   
+    static className = 'excel__table'
 
-    constructor ($root) {
+    // this.$root - Dom{excel__table}
+    constructor ($root, options) {
+        super ($root, {
+            name: 'Table',
+            listeners: ['mousedown', 'keydown', 'input'],
+            ...options
 
-        super ($root, {  
-            listeners: ['mousedown']
         })
     }
 
     toHTML() {
-        return createTable(55)
+        return createTable(20)
+    }
+
+    prepare() {
+        this.selection = new TableSelection()
+    }
+
+    init() {
+        /* super для обработчиков и реасайза */
+        super.init()
+        const $startCell = this.$root.find('[data-id="1:1"]')
+        this.selection.selectCell($startCell)
+
+        this.$on('formula:input', text => {
+            this.selection.current.text(text)
+        })
+        this.$on('formula:focus', () => {
+            this.selection.current.focus()
+        })
+        this.$emit('table:select', $startCell)
     }
 
     onMousedown(event) {
@@ -22,6 +46,44 @@ export class Table extends ExcelComponent {
         if (shouldResize(event)) {
             resizeHandler(this.$root, event)
         }
+
+        if (isCell(event)) {
+            const $target = $(event.target)
+
+            if (event.shiftKey) {
+                const cellsArray = matrix($target, this.selection.current)
+                const $cells = cellsArray.map(id => this.$root.find(`[data-id="${id}"]`))
+                this.selection.selectGroup($cells)
+
+            } else {
+                this.selection.selectCell($target)
+            }
+        }
     }
 
+    onKeydown(event) {
+        const $target = this.selection.current.id(true)
+        let {row, col} = $target
+
+        // забираю event.key через деструкт.
+        const {key} = event
+        const keys = ['Tab', 'Enter', 'ArrowUp', 'ArrowLeft', 'ArrowDown', 'ArrowRight']
+
+        if (keys.includes(key) && !event.shiftKey) {
+            event.preventDefault()
+            const $next = this.$root.find(nextSelector(key, {row, col}))
+            this.selection.selectCell($next)
+            this.$emit('table:select', $next)
+        }
+    }
+
+    onInput(event) {
+        this.$emit('table:input', $(event.target))
+    }
 }
+
+
+
+
+
+
