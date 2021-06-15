@@ -2,33 +2,49 @@ import {$} from '@core/dom';
 
 export function resizeHandler($root, event) {
 
-    // target - это сам resizer
-    const resizer = $(event.target)
-    // data - метод в dom для dataset
-    const type = resizer.data.resize
-     // const parent = resizer.$el.closest('[data-type="resizable"]');
-     // в dom сделан свой метод closest, чтобы parent был от класса Dom
-    const parent = resizer.closest('[data-type="resizable"]')
-    const coordinates = parent.getCoordinates()
-    const cells = $root.findAll(`[data-col="${parent.data.col}"`)
-    const sideProp = type === 'col' ? 'left' : 'top'
+    return new Promise(resolve => {
+        const resizer = $(event.target)
+        // data - метод в dom для dataset
+        const type = resizer.data.resize
+        // в dom сделан свой метод closest, чтобы parent был от класса Dom
+        const parent = resizer.closest('[data-type="resizable"]')
+        const coordinates = parent.getCoordinates()
+        const cells = $root.findAll(`[data-col="${parent.data.col}"`)
+        const sideProp = type === 'col' ? 'left' : 'top'
+        let clickBugOnMousemove = false
+        let value
 
-    document.onmousemove = e => {
-        let deltaX = e.pageX - coordinates.right
-        let newSizeX = coordinates.width + deltaX
-        let deltaY = e.pageY - coordinates.bottom
-        let newSizeY = coordinates.height + deltaY
-        
-        type === 'col' 
-            ? resizer.css({left: newSizeX+'px'})
-            : resizer.css({top: newSizeY+'px'})
-        
-        document.onmouseup = () => {
-            type === 'col'
-                ? cells.forEach(cell => $(cell).css({width: newSizeX+'px'}))
-                : parent.css({height: newSizeY+'px'})
-            resizer.css({[sideProp] : 'auto'})
-            document.onmousemove = null
+        document.onclick = () => clickBugOnMousemove = true
+
+        document.onmousemove = e => {
+            if (clickBugOnMousemove) return
+            const deltaX = e.pageX - coordinates.right
+            const deltaY = e.pageY - coordinates.bottom
+
+            if (type === 'col') {
+                value = coordinates.width + deltaX
+                resizer.css({left: value+'px'})
+            }
+            if (type === 'row') {
+                value = coordinates.height + deltaY
+                resizer.css({top: value+'px'})
+            }
+
+            document.onmouseup = () => {
+
+                document.onmousemove = null
+
+                type === 'col'
+                    ? cells.forEach(cell => $(cell).css({width: value+'px'}))
+                    : parent.css({height: value+'px'})
+                resizer.css({[sideProp] : 'auto'})
+
+                resolve({
+                    value,
+                    id: type === 'col' ? parent.data.col : parent.data.row,
+                    type
+                })
+            }
         }
-    }
+    })
 }

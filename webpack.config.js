@@ -43,7 +43,8 @@ module.exports = (env, argv) => {
         target: 'web',
         context: path.resolve(__dirname, 'src'),
         entry: {
-            main: './index.js'
+            // main: './index.js'
+            main: ['@babel/polyfill','./index.js']
         },
         output: {
             path: path.resolve(__dirname, 'dist'),

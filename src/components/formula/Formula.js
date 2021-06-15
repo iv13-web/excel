@@ -20,8 +20,7 @@ export class Formula extends ExcelComponent {
     toHTML() {
         return `
             <div class="info">fx</div>
-            <div class="input" id="formula" contenteditable spellcheck="false"></div>
-        `
+            <div class="input" id="formula" contenteditable spellcheck="false"></div>`
     }
 
     init() {
@@ -29,13 +28,17 @@ export class Formula extends ExcelComponent {
 
         this.$formula = this.$root.find('#formula')
 
+        // Observer
         this.$on('table:select', $cell => {
             this.$formula.text($cell.text())
         })
 
-        this.$on('table:input', $cell => {
-            this.$formula.text($cell.text())
+        // Redux
+        this.$subscribe(state => {
+            this.$formula.text(state.currentText)
+            console.log('Formula update: ', state.currentText)
         })
+
     }
 
     onInput(event) {
