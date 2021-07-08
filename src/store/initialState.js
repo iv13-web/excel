@@ -4,7 +4,7 @@ const defaultState = {
 	rowState: {},
 	colState: {},
 	dataState: {}, // {'0:1':'текст'}
-	currentText: '', // текущий текст в конкретной ячейке
+	currentText: '',
 
 }
 

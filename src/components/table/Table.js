@@ -1,10 +1,10 @@
-import {$} from "@core/dom";
-import {ExcelComponent} from '@core/ExcelComponent';
+import {$} from "@/core/dom";
+import {ExcelComponent} from '@/core/ExcelComponent';
 import {TableSelection} from "@/components/table/TableSelection";
 import {createTable} from './table.template';
 import {resizeHandler} from './table.resize'
 import {isCell, matrix, nextSelector, shouldResize} from './table.helpers'
-import * as actions from '@/store/actions'
+import * as actions from '../../store/actions'
 
 export class Table extends ExcelComponent {
     static className = 'excel__table'
@@ -51,7 +51,6 @@ export class Table extends ExcelComponent {
     async resizeTable(event) {
         try {
             const data = await resizeHandler(this.$root, event)
-            console.log(data)
             this.$dispatch(actions.tableResize(data))
         } catch (e) {
             console.warn('Resize error', e.message)
@@ -80,8 +79,6 @@ export class Table extends ExcelComponent {
     onKeydown(event) {
         const $target = this.selection.current.id(true)
         let {row, col} = $target
-
-        // забираю event.key через деструкт.
         const {key} = event
         const keys = ['Tab', 'Enter', 'ArrowUp', 'ArrowLeft', 'ArrowDown', 'ArrowRight']
 

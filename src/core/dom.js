@@ -17,6 +17,7 @@ class Dom {
         } 
         // в данном случае работает как getter
         return this.$el.outerHTML.trim()
+
     }
 
     text(text) {

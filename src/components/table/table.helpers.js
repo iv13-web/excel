@@ -23,7 +23,7 @@ export function matrix($current, $target) {
 }
 
 export function nextSelector(key, {row, col}) {
-    const MIN_VALUE = 1
+    const MIN_VALUE = 0
     switch (key) {
         case 'Tab':
             col++

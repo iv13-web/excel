@@ -4,15 +4,14 @@ import {$} from "@core/dom";
 export class Formula extends ExcelComponent {
     static className = 'excel__formula'
 
-    // $el будет наследоваться из DOMListener
+    // $root будет наследоваться из DOMListener
     // options для передачи Observer в ExcelComponent
     constructor ($root, options) {
-        // данный метод super - это то же, что и constructor в ExcelComponents
-        // объект после $el - это опции для конструктора в ExcelComponents
         super($root, {
             name: 'Formula',
             // добавляем слушатели
             listeners: ['input', 'keydown'],
+            subscribe: ['currentText'],
             ...options
         })
     }
@@ -32,13 +31,10 @@ export class Formula extends ExcelComponent {
         this.$on('table:select', $cell => {
             this.$formula.text($cell.text())
         })
+    }
 
-        // Redux
-        this.$subscribe(state => {
-            this.$formula.text(state.currentText)
-            console.log('Formula update: ', state.currentText)
-        })
-
+    storeChanged({currentText}) {
+        this.$formula.text(currentText)
     }
 
     onInput(event) {

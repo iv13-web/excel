@@ -1,16 +1,16 @@
-import {$} from '@core/dom';
-import {Observer} from "@core/Observer";
+import {$} from '@/core/dom';
+import {Observer} from "@/core/Observer";
+import {StoreSubscriber} from "@/core/StoreSubscriber"
 
 export class Excel {
     constructor(selector, options) {
         this.$el = $(selector);
         this.components = options.components || []
-        // store и emitter - единые для всего приложения
         this.store = options.store
         this.observer = new Observer()
+        this.storeSubscriber = new StoreSubscriber(this.store)
     }
 
-    // getContent() - получаем div, заполненный инстансами всех компонентов из массива components
     getRoot() {
         const $root = $.create('div', 'excel');
         const componentOptions = {
@@ -32,10 +32,12 @@ export class Excel {
     render() {
         // this.$el = div.#app в index.js
         this.$el.append(this.getRoot());
+        this.storeSubscriber.subscribeComponents(this.components)
         this.components.forEach(component => component.init())
     }
 
     destroy() {
+        this.storeSubscriber.unsubscribeFromStore(this.components)
         this.components.forEach(component => component.destroy())
     }
 }

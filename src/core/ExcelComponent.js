@@ -4,14 +4,12 @@ import {DOMListener} from '@core/DOMListener';
 export class ExcelComponent extends DOMListener {
 
     constructor ($root, options = {}) {
-        // добавляем options.listeners из formula
         super ($root, options.listeners)
         this.name = options.name
         this.observer = options.observer
+        this.subscribe = options.subscribe || []
         this.store =  options.store
         this.unsubscribers = []
-        this.storeSub = null
-
         this.prepare()
     }
 
@@ -36,13 +34,18 @@ export class ExcelComponent extends DOMListener {
         this.store.dispatch(action)
     }
 
-    $subscribe(fn) {
-        this.storeSub = this.store.subscribe(fn)
+    /*будут передаваться изменения только по тем полям
+    на которые подписались в компоненте*/
+    storeChanged() {
+
+    }
+
+    // $subscribe(fn) {
+        // this.storeSub = this.store.subscribe(fn)
     // подписка будет 1 раз на уровне Excel
     // const sub = this.store.subscribe(fn)
     // sub.unsubscribe()
-
-    }
+    // }
 
     // централизованная реализация добавления слушателей
     init () {
@@ -52,6 +55,5 @@ export class ExcelComponent extends DOMListener {
     destroy () {
         this.removeDOMListeners()
         this.unsubscribers.forEach(unsub => unsub())
-        this.storeSub.unsubscribe()
     }
 }

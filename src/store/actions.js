@@ -10,7 +10,7 @@ export function tableResize (data) {
 export function changeText (data) {
 	return {
 		type: CHANGE_TEXT,
-		// data - объект из Table onInput, который прокидываем через changeText
+		// data - объект из Table onInput
 		data
 	}
 }
